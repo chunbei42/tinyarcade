@@ -473,4 +473,4 @@ def colour_memory_game():
 # =====================================
 
 if __name__ == "__main__":
-    return
+    colour_memory_game()
