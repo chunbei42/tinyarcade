@@ -2,14 +2,17 @@ from tinyarcade import game_num_guess
 from tinyarcade import game_mastermind
 from tinyarcade import game_tictactoe
 from tinyarcade import game_colour_memorizing
+from tinyarcade import game_rock_paper_scissors
+from tinyarcade import game_hangman
 
 GAMES = {
     "1": ("Number Guess", game_num_guess.play),
     "2": ("Mastermind", game_mastermind.play),
     "3": ("Tic Tac Toe", game_tictactoe.play),
     "4": ("Colour Memorizing", game_colour_memorizing.play),
+    "5": ("Rock, Paper, Scissors", game_rock_paper_scissors.play),
+    "6": ("Hangman", game_hangman.play)
 }
-
 
 def show_menu():
     print("\n=== TinyArcade ===")
