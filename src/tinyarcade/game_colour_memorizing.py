@@ -241,10 +241,26 @@ def show_colour_keys(stage):
 def show_dot(letter):
 
     colour_code = COLOURS[letter][0]
+    colour_name = COLOURS[letter][1].upper()
 
-    print("\n" * 4)
-    print(" " * 20 + colour_code + "●" + RESET)
-    print("\n" * 4)
+    print("\n")
+
+    for _ in range(8):
+        print(
+            " " * 15 +
+            colour_code +
+            "████████████████████" +
+            RESET
+        )
+
+    print(
+        "\n" +
+        " " * 20 +
+        colour_code +
+        colour_name +
+        RESET +
+        "\n"
+    )
 
 
 def countdown(stage):
@@ -293,7 +309,7 @@ def show_sequence(sequence, stage):
 
         show_dot(colour)
 
-        time.sleep(1)
+        time.sleep(1.5)
 
         clear_screen()
 
