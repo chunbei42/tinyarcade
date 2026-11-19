@@ -83,34 +83,6 @@ def print_header(stage=None):
 
 
 # =====================================
-# GAME SELECTION MENU
-# =====================================
-
-def game_selection_menu():
-
-    while True:
-
-        clear_screen()
-
-        print("=" * HEADER_WIDTH)
-        print("GAME SELECTION")
-        print("=" * HEADER_WIDTH)
-
-        print("\n[1] Colour Memory Challenge")
-        print("[2] Exit")
-
-        choice = input("\nChoose: ").strip()
-
-        if choice == "1":
-            colour_memory_game()
-
-        elif choice == "2":
-            clear_screen()
-            print("Thanks for playing!")
-            return
-
-
-# =====================================
 # GAME DATA
 # =====================================
 
@@ -501,4 +473,4 @@ def colour_memory_game():
 # =====================================
 
 if __name__ == "__main__":
-    game_selection_menu()
+    return
