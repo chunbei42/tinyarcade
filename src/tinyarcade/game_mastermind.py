@@ -1,6 +1,7 @@
 import random
 import os
 
+
 # ANSI Colors
 RED = "\033[91m"
 YELLOW = "\033[93m"
@@ -36,9 +37,7 @@ def show_rules():
 
 
 def choose_difficulty():
-
     while True:
-
         clear_screen()
         show_rules()
 
@@ -60,7 +59,6 @@ def choose_difficulty():
 
 
 def analyze_guess(guess, secret):
-
     positions = 0
 
     for i in range(len(secret)):
@@ -79,7 +77,6 @@ def analyze_guess(guess, secret):
 
 
 def display_history(history):
-
     print("📜 Guess History\n")
 
     if not history:
@@ -96,7 +93,6 @@ def display_history(history):
     print("-" * 35)
 
     for i, item in enumerate(history, start=1):
-
         print(
             f"{i:<5}"
             f"{item['guess']:<10}"
@@ -110,9 +106,8 @@ def display_game(
     tries,
     hints_left,
     hint_messages,
-    history
+    history,
 ):
-
     print("🎮 CODE BREAKER\n")
 
     print(f"Digits     : {code_length}")
@@ -122,7 +117,6 @@ def display_game(
     print()
 
     if hint_messages:
-
         print("💡 Hints")
 
         for message in hint_messages:
@@ -140,7 +134,6 @@ def color_guess(guess, secret):
     Used ONLY on final results screen.
     Handles duplicate numbers correctly.
     """
-
     colors = [""] * len(guess)
 
     secret_remaining = []
@@ -148,7 +141,6 @@ def color_guess(guess, secret):
 
     # Pass 1 - exact matches
     for i in range(len(guess)):
-
         if guess[i] == secret[i]:
             colors[i] = GREEN
         else:
@@ -157,7 +149,6 @@ def color_guess(guess, secret):
 
     # Pass 2 - wrong position matches
     for index, digit in guess_remaining:
-
         if digit in secret_remaining:
             colors[index] = YELLOW
             secret_remaining.remove(digit)
@@ -173,7 +164,6 @@ def color_guess(guess, secret):
 
 
 def show_final_history(history, secret):
-
     clear_screen()
 
     print("📜 FINAL GUESS HISTORY\n")
@@ -195,17 +185,16 @@ def show_final_history(history, secret):
     print("-" * 40)
 
     for i, item in enumerate(history, start=1):
-
         coloured_guess = color_guess(
             item["guess"],
-            secret
+            secret,
         )
 
         # ANSI colours break width calculation,
         # so manually add spacing.
         spacing = max(
             1,
-            12 - len(item["guess"])
+            12 - len(item["guess"]),
         )
 
         print(
@@ -219,20 +208,22 @@ def show_final_history(history, secret):
     print()
 
     while True:
+        print("\nWhat would you like to do?")
+        print("[1] Play Code Breaker again")
+        print("[2] Return to Menu")
 
-        choice = input(
-            "Play Again? (y/n): "
-        ).strip().lower()
+        choice = input("\nChoose an option: ").strip()
 
-        if choice == "y":
+        if choice == "1":
             return True
 
-        if choice == "n":
+        if choice == "2":
             return False
+
+        print("❌ Invalid choice. Please enter 1 or 2.")
 
 
 def play_round():
-
     difficulty = choose_difficulty()
 
     if difficulty is None:
@@ -252,7 +243,6 @@ def play_round():
     hint_messages = []
 
     while True:
-
         clear_screen()
 
         display_game(
@@ -260,7 +250,7 @@ def play_round():
             tries,
             hints_left,
             hint_messages,
-            history
+            history,
         )
 
         guess = input(
@@ -273,11 +263,8 @@ def play_round():
 
         # Hint
         if guess == "hint":
-
             if hints_left <= 0:
-
                 clear_screen()
-
                 print("❌ No hints remaining.")
 
                 input(
@@ -288,7 +275,7 @@ def play_round():
 
             position = random.randint(
                 0,
-                code_length - 1
+                code_length - 1,
             )
 
             hint_message = (
@@ -296,10 +283,7 @@ def play_round():
                 f"is {secret_code[position]}"
             )
 
-            hint_messages.append(
-                hint_message
-            )
-
+            hint_messages.append(hint_message)
             hints_left -= 1
 
             continue
@@ -309,7 +293,6 @@ def play_round():
             len(guess) != code_length
             or not guess.isdigit()
         ):
-
             clear_screen()
 
             print(
@@ -327,18 +310,19 @@ def play_round():
 
         digits, positions = analyze_guess(
             guess,
-            secret_code
+            secret_code,
         )
 
-        history.append({
-            "guess": guess,
-            "digits": digits,
-            "positions": positions
-        })
+        history.append(
+            {
+                "guess": guess,
+                "digits": digits,
+                "positions": positions,
+            }
+        )
 
         # Win
         if guess == secret_code:
-
             clear_screen()
 
             print("🎉 CONGRATULATIONS!\n")
@@ -351,20 +335,20 @@ def play_round():
 
             return show_final_history(
                 history,
-                secret_code
+                secret_code,
             )
 
 
-# Main Loop
-while True:
+def play():
+    while True:
+        result = play_round()
 
-    result = play_round()
+        if result is False:
+            break
 
-    # Quit to game selection page
-    if result is False:
-        break
+    clear_screen()
+    print("Returning to game menu...")
 
-clear_screen()
 
-print("Returning to game menu...")
-return
+if __name__ == "__main__":
+    play()
