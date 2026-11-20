@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tinyarcade"
+version = "0.1.0"
+description = "A tiny collection of terminal mini-games with a shared menu."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+  { name = "Abbie" },
+  { name = "Sienna" },
+  { name = "Oscar" }
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/chunbei42/tinyarcade"
+Repository = "https://github.com/chunbei42/tinyarcade"
+Issues = "https://github.com/chunbei42/tinyarcade/issues"
+
+[project.scripts]
+tinyarcade = "tinyarcade.menu:run"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tinyarcade"]
