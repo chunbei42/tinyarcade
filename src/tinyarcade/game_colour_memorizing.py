@@ -392,7 +392,7 @@ def show_end_menu(result):
             print(" → ".join(coloured_names))
 
         print("\n[1] Play Again")
-        print("[2] Return to Game Selection")
+        print("[2] Return to Menu")
 
         choice = input("\nChoose: ").strip()
 
@@ -489,4 +489,7 @@ def colour_memory_game():
 # =====================================
 
 if __name__ == "__main__":
+    colour_memory_game()
+
+def play():
     colour_memory_game()
