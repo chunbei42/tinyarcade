@@ -347,7 +347,7 @@ def play():
             break
 
     clear_screen()
-    print("Returning to game menu...")
+    print("Returning to Menu...")
 
 
 if __name__ == "__main__":
