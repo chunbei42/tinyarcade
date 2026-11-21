@@ -1,6 +1,11 @@
+import os
 import random
 import string
 import time
+
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 EASY_WORDS = [
@@ -119,7 +124,8 @@ HANGMAN_STAGES = [
 
 def choose_difficulty():
     while True:
-        print("\n🎮 === HANGMAN === 🎮")
+        clear_screen()
+        print("🎮 === HANGMAN === 🎮")
         print("Choose your difficulty:")
 
         print("\n[1] 🟢 Easy   - 5 hints")
@@ -133,6 +139,7 @@ def choose_difficulty():
             return None
 
         if choice in DIFFICULTIES:
+            clear_screen()
             return DIFFICULTIES[choice]
 
         print("❌ Invalid choice. Please enter 1, 2, 3, or q.")
@@ -175,7 +182,7 @@ def ask_for_hint(hints_left, secret_word, guessed_letters):
         print("🤔 No useful hint is available.")
         return None
 
-    print(f"\n💡 HINT: The letter '{hint_letter}' is NOT in the word.")
+    print(f"💡 HINT: The letter '{hint_letter}' is NOT in the word.")
     return hint_letter
 
 
@@ -185,14 +192,17 @@ def play_round(difficulty_name, words, max_hints):
     wrong_guesses = 0
     hints_left = max_hints
 
-    print(f"\n🎮 === HANGMAN: {difficulty_name.upper()} === 🎮")
+    print(f"🎮 === HANGMAN: {difficulty_name.upper()} === 🎮")
     print("🔤 Guess the secret word one letter at a time.")
     print(f"❤️ You can make {MAX_WRONG_GUESSES} wrong guesses.")
     print(f"💡 You have {max_hints} hint(s).")
     print("💬 Type 'hint' to reveal one letter that is not in the word.")
+    print("🚪 Type 'quit' to return to the Hangman menu.")
+    input("\n⏎ Press ENTER to start the game...")
 
     while wrong_guesses < MAX_WRONG_GUESSES:
-        print(f"\n🔤 Word: {display_word(secret_word, guessed_letters)}")
+        clear_screen()
+        print(f"🔤 Word: {display_word(secret_word, guessed_letters)}")
         print(f"❌ Wrong guesses: {wrong_guesses}/{MAX_WRONG_GUESSES}")
         print(f"💡 Hints left: {hints_left}")
         print(
@@ -203,8 +213,21 @@ def play_round(difficulty_name, words, max_hints):
         show_hangman(wrong_guesses)
 
         guess = input(
-            "\n🎯 Enter a letter or type 'hint': "
+            "\n🎯 Enter a letter, 'hint', or 'quit': "
         ).strip().lower()
+
+        if guess == "quit":
+            clear_screen()
+
+            print("🚪 QUIT GAME")
+            print("-----------------------------")
+            print(f"🤫 The word was: {secret_word.upper()}")
+
+            input("\n⏎ Press ENTER to continue...")
+
+            return
+        
+        clear_screen()
 
         if guess == "hint":
             hint_letter = ask_for_hint(
@@ -221,40 +244,60 @@ def play_round(difficulty_name, words, max_hints):
             continue
 
         if len(guess) != 1 or not guess.isalpha():
-            print("⚠️ Please enter exactly one letter, or type 'hint'.")
+            print(
+                "⚠️ Please enter one letter, 'hint', or 'quit'."
+            )
+            input("\n⏎ Press ENTER to continue...")
             continue
 
         if guess in guessed_letters:
             print("🔁 You already guessed that letter.")
+            input("\n⏎ Press ENTER to continue...")
             continue
 
         guessed_letters.add(guess)
 
         if guess in secret_word:
-            print(f"✅ Good guess! '{guess}' is in the word.")
+            print("🎯 GUESS RESULT")
+            print("-----------------------------")
+            print(f"✅ '{guess}' is in the word!")
+
+            input("\n⏎ Press ENTER to continue...")
         else:
             wrong_guesses += 1
-            print(f"❌ Sorry, '{guess}' is not in the word.")
+
+            print("🎯 GUESS RESULT")
+            print("-----------------------------")
+            print(f"❌ '{guess}' is NOT in the word.")
 
             print("\n🎨 Drawing the hangman...")
-            time.sleep(0.5)
+            time.sleep(0.7)
 
             show_hangman(wrong_guesses)
             time.sleep(0.7)
 
+            input("\n⏎ Press ENTER to continue...")
+            
+
         if all(letter in guessed_letters for letter in secret_word):
-            print("\n🎉🎉🎉 CONGRATULATIONS! 🎉🎉🎉")
+            clear_screen()
+            print("🎉🎉🎉 CONGRATULATIONS! 🎉🎉🎉")
             print(f"🏆 You guessed the word: {secret_word.upper()}")
+            input("\n⏎ Press ENTER to continue...")
+            clear_screen()
             return
 
-    print("\n💀 GAME OVER 💀")
+    clear_screen()
+    print("💀 GAME OVER 💀")
     print(f"😢 The word was: {secret_word.upper()}")
     show_hangman(MAX_WRONG_GUESSES)
+    input("\n⏎ Press ENTER to continue...")
+    clear_screen()
 
 
 def ask_play_again():
     while True:
-        print("\n🎮 What would you like to do?")
+        print("🎮 What would you like to do?")
         print("[1] 🔁 Play Hangman again")
         print("[2] 🚪 Return to TinyArcade menu")
 
@@ -279,6 +322,8 @@ def play():
         difficulty_name, words, max_hints = difficulty
 
         play_round(difficulty_name, words, max_hints)
+
+        clear_screen()
 
         if not ask_play_again():
             break
