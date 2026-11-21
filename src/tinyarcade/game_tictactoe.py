@@ -1,151 +1,128 @@
 import random
-import tkinter as tk
-from tkinter import messagebox
+import time
 
 
-class TicTacToe:
+class TerminalTicTacToe:
 
     def __init__(self):
-        self.window = tk.Tk()
-        self.window.title("Tic Tac Toe")
-        self.window.geometry("400x480")
+        self.reset_game_state()
 
+    def reset_game_state(self):
         self.current_player = "X"
-        self.mode = None  
-        self.buttons = []
+        self.mode = None
+        self.board = [str(i) for i in range(1, 10)]
 
-        self.menu_frame = tk.Frame(self.window)
-        self.menu_frame.pack(pady=100)
+    def display_board(self):
+        print("\n")
+        print(f" {self.board[0]} | {self.board[1]} | {self.board[2]} ")
+        print("---+---+---")
+        print(f" {self.board[3]} | {self.board[4]} | {self.board[5]} ")
+        print("---+---+---")
+        print(f" {self.board[6]} | {self.board[7]} | {self.board[8]} ")
+        print("\n")
 
-        self.mode_label = tk.Label(
-            self.menu_frame, text="Select Mode:", font=("Arial", 18, "bold")
-        )
-        self.mode_label.pack(pady=15)
+    def select_mode(self):
+        while True:
+            print("=== Welcome to Tic Tac Toe ===")
+            print("1. PVE (Single Player)")
+            print("2. PVP (Multi-Player)")
+            print("3. Exit")
+            choice = input("Select Mode (1-3): ").strip()
 
-        self.pve_mode_button = tk.Button(
-            self.menu_frame,
-            text="PVE (Single Player)",
-            font=("Arial", 12),
-            width=20,
-            command=lambda: self.start_game("PVE"),
-        )
-        self.pve_mode_button.pack(pady=5)
+            if choice == "1":
+                self.mode = "PVE"
+                return True
+            elif choice == "2":
+                self.mode = "PVP"
+                return True
+            elif choice == "3":
+                print("Goodbye!")
+                return False
+            else:
+                print("❌ Invalid choice. Please enter 1, 2, or 3.\n")
 
-        self.pvp_mode_button = tk.Button(
-            self.menu_frame,
-            text="PVP (Multi-Player)",
-            font=("Arial", 12),
-            width=20,
-            command=lambda: self.start_game("PVP"),
-        )
-        self.pvp_mode_button.pack(pady=5)
+    def play(self):
+        while self.select_mode():
+            self.reset_game_state()
+            print(f"\n🎮 Game Started! Mode: {self.mode}")
 
-    def start_game(self, mode):
-        self.mode = mode
-        self.current_player = "X"
-        self.menu_frame.pack_forget()  
+            while True:
+                self.display_board()
+                print(f"Current Turn: {self.current_player}")
 
-        self.status_label = tk.Label(
-            self.window,
-            text=f"Mode: {self.mode} | Turn: X",
-            font=("Arial", 14),
-        )
-        self.status_label.pack(pady=10)
+                if self.mode == "PVE" and self.current_player == "O":
+                    print("🤖 Computer is thinking...")
+                    time.sleep(0.6)
+                    move = self.get_computer_move()
+                else:
+                    move = self.get_player_move()
 
-        self.board_frame = tk.Frame(self.window)
-        self.board_frame.pack()
+                self.board[move] = self.current_player
 
-        self.buttons = []
-        for i in range(3):
-            row = []
-            for j in range(3):
-                button = tk.Button(
-                    self.board_frame,
-                    text="",
-                    font=("Arial", 20, "bold"),
-                    height=2,
-                    width=5,
-                    command=lambda r=i, c=j: self.click(r, c),
-                )
-                button.grid(row=i, column=j, padx=2, pady=2)
-                row.append(button)
-            self.buttons.append(row)
+                if self.check_game_over():
+                    break
 
-        self.reset_button = tk.Button(
-            self.window,
-            text="Back to Menu",
-            font=("Arial", 12),
-            command=self.reset_to_menu,
-        )
-        self.reset_button.pack(pady=15)
+                self.current_player = "O" if self.current_player == "X" else "X"
 
-    def click(self, row, column):
-        if self.buttons[row][column].cget("text") != "":
-            return
-        self.buttons[row][column].config(text=self.current_player)
-        if self.check_game_over():
-            return
-        self.current_player = "O" if self.current_player == "X" else "X"
-        self.status_label.config(
-            text=f"Mode: {self.mode} | Turn: {self.current_player}"
-        )
-        if self.mode == "PVE" and self.current_player == "O":
-            self.window.after(300, self.computer_move)  
+            print("=" * 30 + "\n")
 
-    def computer_move(self):
-        empty_cells = [
-            (r, c)
-            for r in range(3)
-            for c in range(3)
-            if self.buttons[r][c].cget("text") == ""
-        ]
-        if empty_cells:
-            r, c = random.choice(empty_cells)
-            self.click(r, c)
+    def get_player_move(self):
+        while True:
+            try:
+                move_input = input(
+                    f"Choose a position (1-9) to place '{self.current_player}': "
+                ).strip()
+                move = int(move_input) - 1
+
+                if move < 0 or move > 8:
+                    print("❌ Please enter a number between 1 and 9.")
+                    continue
+                if self.board[move] in ["X", "O"]:
+                    print("❌ That position is already taken! Try again.")
+                    continue
+
+                return move
+            except ValueError:
+                print("❌ Invalid input! Please enter a valid number.")
+
+    def get_computer_move(self):
+        empty_cells = [i for i in range(9) if self.board[i] not in ["X", "O"]]
+        return random.choice(empty_cells)
 
     def check_game_over(self):
-        board = [
-            [self.buttons[r][c].cget("text") for c in range(3)]
-            for r in range(3)
+        win_combinations = [
+            (0, 1, 2),
+            (3, 4, 5),
+            (6, 7, 8),
+            (0, 3, 6),
+            (1, 4, 7),
+            (2, 5, 8),
+            (0, 4, 8),
+            (2, 4, 6),
         ]
-        for i in range(3):
-            if board[i][0] == board[i][1] == board[i][2] != "":
-                self.announce_winner(board[i][0])
+
+        for combo in win_combinations:
+            if (
+                self.board[combo[0]]
+                == self.board[combo[1]]
+                == self.board[combo[2]]
+            ):
+                self.display_board()
+                winner = self.board[combo[0]]
+                if self.mode == "PVE" and winner == "O":
+                    print("🤖 Game Over: Computer (O) wins!")
+                else:
+                    print(f"🎉 Game Over: Player {winner} wins!")
                 return True
-            if board[0][i] == board[1][i] == board[2][i] != "":
-                self.announce_winner(board[0][i])
-                return True
-        if board[0][0] == board[1][1] == board[2][2] != "":
-            self.announce_winner(board[0][0])
-            return True
-        if board[0][2] == board[1][1] == board[2][0] != "":
-            self.announce_winner(board[0][2])
-            return True
-        if all(board[r][c] != "" for r in range(3) for c in range(3)):
-            messagebox.showinfo("Game Over", "It's a Draw!")
-            self.reset_to_menu()
+
+        if all(cell in ["X", "O"] for cell in self.board):
+            self.display_board()
+            print("🤝 Game Over: It's a Draw!")
             return True
 
         return False
 
-    def announce_winner(self, winner):
-        if self.mode == "PVE" and winner == "O":
-            msg = "Computer (O) wins!"
-        else:
-            msg = f"Player {winner} wins!"
-        messagebox.showinfo("Game Over", msg)
-        self.reset_to_menu()
-
-    def reset_to_menu(self):
-        self.status_label.destroy()
-        self.board_frame.destroy()
-        self.reset_button.destroy()
-        self.menu_frame.pack(pady=100)
-
-    def run(self):
-        self.window.mainloop()
-
 
 if __name__ == "__main__":
-    game = TicTacToe()
-    game.run()
+    game = TerminalTicTacToe()
+    game.play()
