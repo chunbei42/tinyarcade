@@ -1,5 +1,4 @@
 import os
-import time
 
 from tinyarcade import game_num_guess
 from tinyarcade import game_mastermind
@@ -23,7 +22,7 @@ GAMES = {
 
 
 def show_menu():
-    print("\n=== TinyArcade ===")
+    print("=== TinyArcade ===")
     for key, (name, _) in GAMES.items():
         print(f"{key}. {name}")
     print("q. Quit")
