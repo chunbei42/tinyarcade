@@ -136,19 +136,20 @@ When TinyArcade starts, choose a game by entering its number:
 
 ```text
 ==================================================
-                   🎮 TINYARCADE 🎮                   
+                  🎮 TINYARCADE 🎮                  
                   Select a Game                   
 ==================================================
 
-  Number Guess
-  Mastermind[1]
-  Tic Tac Toe[2]
-  Colour Memorizing[3]
-  Rock, Paper, Scissors[4]
-  Hangman[5]
+ [1] Number Guess
+ [2] Mastermind
+ [3] Tic Tac Toe
+ [4] Colour Memorizing
+ [5] Rock, Paper, Scissors
+ [6] Hangman
  [Q] Quit
 
 ==================================================
+👉 Enter your choice: 
 ```
 
 For example, enter `3` to play Tic-Tac-Toe:
@@ -163,13 +164,13 @@ Enter `q` at the main menu to quit. TinyArcade will show a goodbye message befor
 
 ```text
 ==================================================
-                   THANK YOU FOR PLAYING                   
-                        TINYARCADE                        
+              THANK YOU FOR PLAYING               
+                    TINYARCADE                    
 ==================================================
 
-🎮 Hope you had fun!                    
-🏆 Keep practicing and challenge yourself!                 
-🕹️ Thanks for supporting TinyArcade!                   
+               🎮 Hope you had fun!                
+    🏆 Keep practicing and challenge yourself!     
+       🕹️ Thanks for supporting TinyArcade!       
 
 ==================================================
 
@@ -222,12 +223,12 @@ Watch the sequence, then enter it using letter keys:
 
 | Key | Colour |
 |---|---|
-| `r` | Red |
-| `b` | Blue |
-| `g` | Green |
-| `y` | Yellow |
-| `w` | White |
-| `p` | Purple |
+| `R` | Red |
+| `B` | Blue |
+| `G` | Green |
+| `Y` | Yellow |
+| `W` | White |
+| `P` | Purple |
 
 The sequence grows by one colour each stage. Enter the full sequence in order to advance. Press `q` during input to return to the menu.
 
