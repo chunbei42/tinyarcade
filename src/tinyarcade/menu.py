@@ -7,6 +7,7 @@ from tinyarcade import game_colour_memorizing
 from tinyarcade import game_rock_paper_scissors
 from tinyarcade import game_hangman
 
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -22,39 +23,58 @@ GAMES = {
 
 
 def show_menu():
-    print("=== TinyArcade ===")
+    print("=" * 50)
+    print("🎮 TINYARCADE 🎮".center(50))
+    print("Select a Game".center(50))
+    print("=" * 50)
+    print()
+
     for key, (name, _) in GAMES.items():
-        print(f"{key}. {name}")
-    print("q. Quit")
+        print(f" [{key}] {name}")
+
+    print(" [Q] Quit")
+
+    print()
+    print("=" * 50)
+
+
+def show_goodbye():
+    clear_screen()
+
+    print("=" * 50)
+    print("THANK YOU FOR PLAYING".center(50))
+    print("TINYARCADE".center(50))
+    print("=" * 50)
+    print()
+    print("🎮 Hope you had fun!".center(50))
+    print("🏆 Keep practicing and challenge yourself!".center(50))
+    print("🕹️ Thanks for supporting TinyArcade!".center(50))
+    print()
+    print("=" * 50)
+
+    input("\nPress Enter to exit...")
 
 
 def run():
     while True:
         clear_screen()
         show_menu()
-        choice = input("Choose a game: ").strip().lower()
+
+        choice = input("👉 Enter your choice: ").strip().lower()
 
         if choice == "q":
-            clear_screen()
-
-            print("=" * 50)
-            print("THANK YOU FOR PLAYING".center(50))
-            print("TINYARCADE".center(50))
-            print("=" * 50)
-            print()
-            print("🎮 Hope you had fun!".center(50))
-            print("🏆 Keep practicing and challenge yourself!".center(50))
-            print("🕹️ Thanks for supporting TinyArcade!".center(50))
-            print()
-            print("=" * 50)
+            show_goodbye()
             break
 
         if choice in GAMES:
             _, game_function = GAMES[choice]
+
             clear_screen()
             game_function()
+
         else:
-            print("Invalid choice. Please try again.")
+            print("\n❌ Invalid choice. Please try again.")
+            input("\nPress Enter to continue...")
 
 
 if __name__ == "__main__":
