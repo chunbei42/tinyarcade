@@ -2,6 +2,26 @@ import random
 import time
 
 
+# ANSI colours
+GREEN = "\033[92m"
+RED = "\033[91m"
+YELLOW = "\033[93m"
+CYAN = "\033[96m"
+RESET = "\033[0m"
+
+
+WINNING_COMBINATIONS = [
+    (0, 1, 2),
+    (3, 4, 5),
+    (6, 7, 8),
+    (0, 3, 6),
+    (1, 4, 7),
+    (2, 5, 8),
+    (0, 4, 8),
+    (2, 4, 6),
+]
+
+
 class TerminalTicTacToe:
 
     def __init__(self):
@@ -10,6 +30,7 @@ class TerminalTicTacToe:
     def reset_game_state(self):
         self.current_player = "X"
         self.mode = None
+        self.difficulty = None
         self.board = [str(i) for i in range(1, 10)]
 
     def display_board(self):
@@ -23,106 +44,258 @@ class TerminalTicTacToe:
 
     def select_mode(self):
         while True:
-            print("=== Welcome to Tic Tac Toe ===")
-            print("1. PVE (Single Player)")
-            print("2. PVP (Multi-Player)")
-            print("3. Exit")
-            choice = input("Select Mode (1-3): ").strip()
+            print("\n🎮 === TIC TAC TOE === 🎮")
+            print("Choose a game mode:")
+
+            print("\n[1] 🧑🤖 PVE - Single Player")
+            print("[2] 🧑🧑 PVP - Multi-Player")
+            print("[q] 🚪 Return to TinyArcade menu")
+
+            choice = input("\n🎯 Choose a mode: ").strip().lower()
 
             if choice == "1":
                 self.mode = "PVE"
+
+                if not self.select_difficulty():
+                    return False
+
                 return True
-            elif choice == "2":
+
+            if choice == "2":
                 self.mode = "PVP"
                 return True
-            elif choice == "3":
-                print("Goodbye!")
+
+            if choice == "q":
+                print("\n🚪 Returning to TinyArcade menu...")
                 return False
-            else:
-                print("❌ Invalid choice. Please enter 1, 2, or 3.\n")
+
+            print("❌ Invalid choice. Please enter 1, 2, or q.")
+
+    def select_difficulty(self):
+        while True:
+            print("\n🎯 Choose the computer difficulty:")
+
+            print("\n[1] 🟢 Easy   - Random moves")
+            print("[2] 🟡 Normal - Blocks and wins when possible")
+            print("[3] 🔴 Hard   - Plays the best possible move")
+            print("[q] 🚪 Return to TinyArcade menu")
+
+            choice = input("\n🎯 Choose a difficulty: ").strip().lower()
+
+            if choice == "1":
+                self.difficulty = "Easy"
+                return True
+
+            if choice == "2":
+                self.difficulty = "Normal"
+                return True
+
+            if choice == "3":
+                self.difficulty = "Hard"
+                return True
+
+            if choice == "q":
+                print("\n🚪 Returning to TinyArcade menu...")
+                return False
+
+            print("❌ Invalid choice. Please enter 1, 2, 3, or q.")
 
     def play(self):
-        while self.select_mode():
-            self.reset_game_state()
-            print(f"\n🎮 Game Started! Mode: {self.mode}")
+        if not self.select_mode():
+            return
 
-            while True:
-                self.display_board()
-                print(f"Current Turn: {self.current_player}")
+        print(f"\n🎮 Game Started! Mode: {self.mode}")
 
-                if self.mode == "PVE" and self.current_player == "O":
-                    print("🤖 Computer is thinking...")
-                    time.sleep(0.6)
-                    move = self.get_computer_move()
-                else:
-                    move = self.get_player_move()
+        if self.mode == "PVE":
+            print(f"🤖 Computer difficulty: {self.difficulty}")
 
-                self.board[move] = self.current_player
+        while True:
+            self.display_board()
+            print(f"Current Turn: {self.current_player}")
 
-                if self.check_game_over():
-                    break
+            if self.mode == "PVE" and self.current_player == "O":
+                print("🤖 Computer is thinking...")
+                time.sleep(0.6)
+                move = self.get_computer_move()
 
-                self.current_player = "O" if self.current_player == "X" else "X"
+            else:
+                move = self.get_player_move()
 
-            print("=" * 30 + "\n")
+                if move == "quit":
+                    print("\n🚪 Returning to TinyArcade menu...")
+                    return
+
+            self.board[move] = self.current_player
+
+            if self.check_game_over():
+                break
+
+            self.current_player = "O" if self.current_player == "X" else "X"
+
+        print("=" * 30 + "\n")
 
     def get_player_move(self):
         while True:
             try:
                 move_input = input(
-                    f"Choose a position (1-9) to place '{self.current_player}': "
-                ).strip()
+                    f"Choose a position (1-9) to place "
+                    f"'{self.current_player}' or [q] to quit: "
+                ).strip().lower()
+
+                if move_input == "q":
+                    return "quit"
+
                 move = int(move_input) - 1
 
                 if move < 0 or move > 8:
                     print("❌ Please enter a number between 1 and 9.")
                     continue
+
                 if self.board[move] in ["X", "O"]:
                     print("❌ That position is already taken! Try again.")
                     continue
 
                 return move
+
             except ValueError:
                 print("❌ Invalid input! Please enter a valid number.")
 
-    def get_computer_move(self):
-        empty_cells = [i for i in range(9) if self.board[i] not in ["X", "O"]]
-        return random.choice(empty_cells)
-
-    def check_game_over(self):
-        win_combinations = [
-            (0, 1, 2),
-            (3, 4, 5),
-            (6, 7, 8),
-            (0, 3, 6),
-            (1, 4, 7),
-            (2, 5, 8),
-            (0, 4, 8),
-            (2, 4, 6),
+    def get_empty_cells(self):
+        return [
+            i for i in range(9)
+            if self.board[i] not in ["X", "O"]
         ]
 
-        for combo in win_combinations:
+    def get_computer_move(self):
+        if self.difficulty == "Easy":
+            return self.get_random_move()
+
+        if self.difficulty == "Normal":
+            return self.get_normal_move()
+
+        return self.get_best_move()
+
+    def get_random_move(self):
+        empty_cells = self.get_empty_cells()
+        return random.choice(empty_cells)
+
+    def find_winning_move(self, player):
+        empty_cells = self.get_empty_cells()
+
+        for cell in empty_cells:
+            test_board = self.board[:]
+            test_board[cell] = player
+
+            if self.check_winner(test_board, player):
+                return cell
+
+        return None
+
+    def get_normal_move(self):
+        winning_move = self.find_winning_move("O")
+
+        if winning_move is not None:
+            return winning_move
+
+        blocking_move = self.find_winning_move("X")
+
+        if blocking_move is not None:
+            return blocking_move
+
+        return self.get_random_move()
+
+    def get_best_move(self):
+        best_score = -2
+        best_move = None
+        empty_cells = self.get_empty_cells()
+
+        for cell in empty_cells:
+            self.board[cell] = "O"
+            score = self.minimax(False)
+            self.board[cell] = str(cell + 1)
+
+            if score > best_score:
+                best_score = score
+                best_move = cell
+
+        return best_move
+
+    def minimax(self, is_computer_turn):
+        if self.check_winner(self.board, "O"):
+            return 1
+
+        if self.check_winner(self.board, "X"):
+            return -1
+
+        empty_cells = self.get_empty_cells()
+
+        if not empty_cells:
+            return 0
+
+        if is_computer_turn:
+            best_score = -2
+
+            for cell in empty_cells:
+                self.board[cell] = "O"
+                score = self.minimax(False)
+                self.board[cell] = str(cell + 1)
+                best_score = max(best_score, score)
+
+            return best_score
+
+        best_score = 2
+
+        for cell in empty_cells:
+            self.board[cell] = "X"
+            score = self.minimax(True)
+            self.board[cell] = str(cell + 1)
+            best_score = min(best_score, score)
+
+        return best_score
+
+    def check_winner(self, board, player):
+        for combo in WINNING_COMBINATIONS:
+            if (
+                board[combo[0]] == player
+                and board[combo[1]] == player
+                and board[combo[2]] == player
+            ):
+                return True
+
+        return False
+
+    def check_game_over(self):
+        for combo in WINNING_COMBINATIONS:
             if (
                 self.board[combo[0]]
                 == self.board[combo[1]]
                 == self.board[combo[2]]
             ):
                 self.display_board()
+
                 winner = self.board[combo[0]]
+
                 if self.mode == "PVE" and winner == "O":
-                    print("🤖 Game Over: Computer (O) wins!")
+                    print(f"{RED}🤖 Game Over: Computer (O) wins!{RESET}")
                 else:
-                    print(f"🎉 Game Over: Player {winner} wins!")
+                    print(
+                        f"{GREEN}🎉 Game Over: Player {winner} wins!{RESET}"
+                    )
+
                 return True
 
         if all(cell in ["X", "O"] for cell in self.board):
             self.display_board()
-            print("🤝 Game Over: It's a Draw!")
+            print(f"{YELLOW}🤝 Game Over: It's a Draw!{RESET}")
             return True
 
         return False
 
 
-if __name__ == "__main__":
+def play():
     game = TerminalTicTacToe()
     game.play()
+
+
+if __name__ == "__main__":
+    play()
