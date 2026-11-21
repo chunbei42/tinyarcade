@@ -14,6 +14,81 @@ PyPI: https://pypi.org/project/tinyarcade/
 
 Repository: https://github.com/chunbei42/tinyarcade
 
+## Why TinyArcade?
+
+TinyArcade was created to make a small collection of classic terminal games easy to run from one place. Instead of opening separate scripts or remembering different commands for each game, users can install one package and launch every game from a shared menu.
+
+The project is designed to be simple, lightweight, and beginner-friendly. It uses only Python’s standard library, so it can run without installing extra dependencies. It is also a practical example of packaging a command-line application with a `src/` layout, a console entry point, and a shared menu system.
+
+## What makes it different?
+
+TinyArcade is not just one game—it is a small arcade with a consistent interface.
+
+- **One command, six games:** `tinyarcade` opens a shared menu where users can choose a game.
+- **No external dependencies:** all games use Python’s standard library, making installation and maintenance simple.
+- **Consistent controls:** games use numbered menus, keyboard input, and a common way to return to the main menu.
+- **Colourful terminal output:** games use ANSI colours to make boards, sequences, and results easier to read.
+- **Different difficulty levels:** several games include Easy, Normal, and Hard modes.
+- **Reusable game structure:** every game exposes a `play()` function, allowing the shared menu to launch any game in the same way.
+
+The package is intentionally small, but its structure makes it easy to add more games later. A new game only needs a `play()` function and an entry in the menu’s `GAMES` dictionary.
+
+## Example use cases
+
+### Learning Python packaging
+
+TinyArcade can be used as a compact example of building and distributing a Python command-line package. It demonstrates:
+
+- A `src/` package layout
+- A `pyproject.toml` build configuration using Hatchling
+- A console-script entry point
+- A shared menu that imports and calls game modules
+- A package that can be installed with `pip`
+
+For example, after installing the package, a user can start it with:
+
+```bash
+tinyarcade
+```
+
+### Playing quick games
+
+TinyArcade is useful for short breaks or casual play. A user can open a terminal, run `tinyarcade`, choose a game, play for a few minutes, and return to the menu.
+
+Examples include:
+
+- Guessing a number in **Number Guess**
+- Solving a hidden code in **Mastermind**
+- Playing a quick match of **Rock, Paper, Scissors**
+- Testing memory in **Colour Memory Challenge**
+- Playing a round of **Tic-Tac-Toe** with a friend
+- Guessing a word in **Hangman**
+
+### Practising logic and strategy
+
+Some games give players a chance to practise different skills:
+
+| Game | Skill practised |
+|---|---|
+| Number Guess | Logical narrowing of a range |
+| Mastermind | Deduction and pattern recognition |
+| Tic-Tac-Toe | Strategy and planning ahead |
+| Colour Memory Challenge | Memory and attention |
+| Rock, Paper, Scissors | Probability and decision-making |
+| Hangman | Vocabulary and letter-frequency reasoning |
+
+### Demonstrating terminal applications
+
+TinyArcade can be used to show how a Python package can provide an interactive terminal experience. It is suitable for a class demonstration, a small portfolio project, or an example of how multiple Python modules can work together behind one command-line interface.
+
+For example, a teacher could use it to demonstrate:
+
+- How a console command is created with `[project.scripts]`
+- How modules in a package communicate through imports
+- How a menu can call different functions dynamically
+- How a project can be organised with a `src/` layout
+- How a package can be built and installed locally
+
 ## Requirements
 
 - Python >= 3.9
@@ -21,27 +96,33 @@ Repository: https://github.com/chunbei42/tinyarcade
 
 TinyArcade has no external Python dependencies.
 
-## Install
+## Setup
+
+### Install from PyPI
 
 ```bash
 pip install tinyarcade
 ```
 
-## Uninstall
+### Install from source
+
+Clone the repository and install it in editable mode:
 
 ```bash
-pip uninstall tinyarcade
+git clone [https://github.com/chunbei42/tinyarcade.git](https://github.com/chunbei42/tinyarcade.git)
+cd tinyarcade
+python -m pip install -e .
 ```
 
-## Usage
+### Run TinyArcade
 
-Start TinyArcade from the terminal:
+After installation, start the arcade from the terminal:
 
 ```bash
 tinyarcade
 ```
 
-You can also start it from Python:
+Or start it from Python:
 
 ```python
 from tinyarcade.menu import run
@@ -49,7 +130,9 @@ from tinyarcade.menu import run
 run()
 ```
 
-The main menu lets you choose one of the available games:
+## Usage
+
+When TinyArcade starts, choose a game by entering its number:
 
 ```text
 === TinyArcade ===
@@ -62,7 +145,13 @@ The main menu lets you choose one of the available games:
 q. Quit
 ```
 
-Enter the number beside a game to play it. Enter `q` to leave TinyArcade.
+For example, enter `3` to play Tic-Tac-Toe:
+
+```text
+Choose a game: 3
+```
+
+After finishing a game, return to the TinyArcade menu to choose another game. Enter `q` at the main menu to quit.
 
 ## Games
 
@@ -191,6 +280,27 @@ tinyarcade/
         ├── game_rock_paper_scissors.py
         └── game_hangman.py
 ```
+
+## Adding a game
+
+TinyArcade is designed to be extendable. To add a new game:
+
+1. Create a new module in `src/tinyarcade/`, such as `game_quiz.py`.
+2. Define a no-argument function called `play()`.
+3. Import the module in `menu.py`.
+4. Add it to the `GAMES` dictionary.
+
+Example:
+
+```python
+from tinyarcade import game_quiz
+
+GAMES = {
+    "7": ("Quiz", game_quiz.play),
+}
+```
+
+The menu can then launch the new game through the same interface used by the existing games.
 
 ## License
 
