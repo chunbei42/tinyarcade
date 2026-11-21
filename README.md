@@ -135,23 +135,46 @@ run()
 When TinyArcade starts, choose a game by entering its number:
 
 ```text
-=== TinyArcade ===
-1. Number Guess
-2. Mastermind
-3. Tic Tac Toe
-4. Colour Memorizing
-5. Rock, Paper, Scissors
-6. Hangman
-q. Quit
+==================================================
+                   🎮 TINYARCADE 🎮                   
+                  Select a Game                   
+==================================================
+
+  Number Guess
+  Mastermind[1]
+  Tic Tac Toe[2]
+  Colour Memorizing[3]
+  Rock, Paper, Scissors[4]
+  Hangman[5]
+ [Q] Quit
+
+==================================================
 ```
 
 For example, enter `3` to play Tic-Tac-Toe:
 
 ```text
-Choose a game: 3
+👉 Enter your choice: 3
 ```
 
-After finishing a game, return to the TinyArcade menu to choose another game. Enter `q` at the main menu to quit.
+After finishing a game, you will return to the TinyArcade menu and can choose another game.
+
+Enter `q` at the main menu to quit. TinyArcade will show a goodbye message before closing:
+
+```text
+==================================================
+                   THANK YOU FOR PLAYING                   
+                        TINYARCADE                        
+==================================================
+
+🎮 Hope you had fun!                    
+🏆 Keep practicing and challenge yourself!                 
+🕹️ Thanks for supporting TinyArcade!                   
+
+==================================================
+
+Press Enter to exit...
+```
 
 ## Games
 
@@ -187,6 +210,8 @@ The computer has three difficulty levels:
 
 Enter a position from 1 to 9 to place your mark.
 
+After a game ends, choose whether to start another game, return to the TinyArcade menu, or exit.
+
 ### Colour Memory Challenge
 
 Memorise and repeat a growing sequence of coloured squares.
@@ -217,6 +242,10 @@ Choose one of three difficulty modes:
 - **Hard**: win three rounds in a row
 
 Enter `1` for rock, `2` for paper, or `3` for scissors. The game displays both choices, updates the scoreboard, and shows the round result.
+
+In Easy and Normal modes, each round win adds one point. In Hard mode, a tie resets both winning streaks, while a win by either player resets the other player’s streak.
+
+After a match ends, choose whether to play again or return to the TinyArcade menu.
 
 ### Hangman
 
