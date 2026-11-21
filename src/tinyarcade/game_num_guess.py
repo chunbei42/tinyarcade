@@ -17,29 +17,30 @@ def generate_range():
 
 
 def get_guess(min_num, max_num):
-    while True:
-        user_input = input(
-            f"\n🎯 Enter your guess ({min_num}-{max_num}) "
-            f"or [q] to quit: "
-        ).strip().lower()
+    user_input = input(
+        f"\n🎯 Enter your guess ({min_num}-{max_num}) "
+        f"or [q] to quit: "
+    ).strip().lower()
 
-        if user_input == "q":
-            return "quit"
+    if user_input == "q":
+        return "quit", None
 
-        try:
-            guess = int(user_input)
-        except ValueError:
-            print("❌ Invalid input! Please enter a whole number.")
-            continue
+    try:
+        guess = int(user_input)
+    except ValueError:
+        return None, (
+            user_input,
+            "❌ Invalid input! Please enter a whole number."
+        )
 
-        if guess < min_num or guess > max_num:
-            print(
-                f"❌ Invalid range! Please stay between "
-                f"{min_num} and {max_num}."
-            )
-            continue
+    if guess < min_num or guess > max_num:
+        return None, (
+            str(guess),
+            f"❌ Invalid range! Please stay between "
+            f"{min_num} and {max_num}."
+        )
 
-        return guess
+    return guess, None
 
 
 def update_range(guess, target_number, min_num, max_num):
@@ -108,15 +109,29 @@ def play():
         print("🏆 Guess the secret number!")
 
         while True:
-            guess = get_guess(min_num, max_num)
+            guess, error = get_guess(min_num, max_num)
 
             if guess == "quit":
                 print("\n🚪 Returning to TinyArcade menu...")
                 return
 
+            if error:
+                entered_value, error_msg = error
+
+                clr()
+
+                print("🎮 GUESS RESULT")
+                print(f"🎯 Your guess  : {entered_value}")
+                print("🤫 Secret number: ???")
+                print("-" * 30)
+                print(f"{RED}{error_msg}{RESET}")
+
+                continue
+
             attempts += 1
 
             clr()
+
             won = show_result(guess, target_number, attempts)
 
             if won:
