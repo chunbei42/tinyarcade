@@ -1,12 +1,17 @@
 import random
+from shutil import move
 import time
+import os
 
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
 # ANSI colours
 GREEN = "\033[92m"
 RED = "\033[91m"
 YELLOW = "\033[93m"
 CYAN = "\033[96m"
+MAGENTA = "\033[95m"
 RESET = "\033[0m"
 
 
@@ -33,18 +38,84 @@ class TerminalTicTacToe:
         self.difficulty = None
         self.board = [str(i) for i in range(1, 10)]
 
+        self.last_move = None
+        self.winning_line = None
+
+    def format_cell(self, index):
+        value = self.board[index]
+
+        if self.winning_line and index in self.winning_line:
+            return f"{GREEN}{value}{RESET}"
+
+        if index == self.last_move:
+            return f"{YELLOW}{value}{RESET}"
+
+        return value
+    
+
     def display_board(self):
-        print("\n")
-        print(f" {self.board[0]} | {self.board[1]} | {self.board[2]} ")
+
+        print("=" * 35)
+
+        if self.mode == "PVE":
+            print(
+                f"🎮 Mode: {CYAN}PVE{RESET}    "
+                f"🎯 Difficulty: {YELLOW}{self.difficulty}{RESET}"
+            )
+        elif self.mode == "PVP":
+            print(f"🎮 Mode: {CYAN}PVP{RESET}")
+
+        print("=" * 35)
+
+        print()
+
+        print(
+            f" {self.format_cell(0)} | "
+            f"{self.format_cell(1)} | "
+            f"{self.format_cell(2)} "
+        )
+
         print("---+---+---")
-        print(f" {self.board[3]} | {self.board[4]} | {self.board[5]} ")
+
+        print(
+            f" {self.format_cell(3)} | "
+            f"{self.format_cell(4)} | "
+            f"{self.format_cell(5)} "
+        )
+
         print("---+---+---")
-        print(f" {self.board[6]} | {self.board[7]} | {self.board[8]} ")
-        print("\n")
+
+        print(
+            f" {self.format_cell(6)} | "
+            f"{self.format_cell(7)} | "
+            f"{self.format_cell(8)} "
+        )
+
+        print()
+
+    def post_game_menu(self):
+        while True:
+            print("\n[1] 🔄 Play Again")
+            print("[2] 🎮 Game Selection")
+            print("[q] 🚪 Exit")
+
+            choice = input("\nChoose: ").strip().lower()
+
+            if choice == "1":
+                return "again"
+
+            if choice == "2":
+                return "menu"
+
+            if choice == "q":
+                return "quit"
+
+            print("❌ Invalid choice.")
 
     def select_mode(self):
         while True:
-            print("\n🎮 === TIC TAC TOE === 🎮")
+            clear_screen()
+            print("🎮 === TIC TAC TOE === 🎮")
             print("Choose a game mode:")
 
             print("\n[1] 🧑🤖 PVE - Single Player")
@@ -73,7 +144,8 @@ class TerminalTicTacToe:
 
     def select_difficulty(self):
         while True:
-            print("\n🎯 Choose the computer difficulty:")
+            clear_screen()
+            print("🎯 Choose the computer difficulty:")
 
             print("\n[1] 🟢 Easy   - Random moves")
             print("[2] 🟡 Normal - Blocks and wins when possible")
@@ -84,14 +156,17 @@ class TerminalTicTacToe:
 
             if choice == "1":
                 self.difficulty = "Easy"
+                clear_screen()
                 return True
 
             if choice == "2":
                 self.difficulty = "Normal"
+                clear_screen()
                 return True
 
             if choice == "3":
                 self.difficulty = "Hard"
+                clear_screen()
                 return True
 
             if choice == "q":
@@ -104,12 +179,18 @@ class TerminalTicTacToe:
         if not self.select_mode():
             return
 
+        clear_screen()
+
         print(f"\n🎮 Game Started! Mode: {self.mode}")
 
         if self.mode == "PVE":
             print(f"🤖 Computer difficulty: {self.difficulty}")
 
+        time.sleep(1.5)
+
         while True:
+            clear_screen()
+
             self.display_board()
             print(f"Current Turn: {self.current_player}")
 
@@ -117,6 +198,24 @@ class TerminalTicTacToe:
                 print("🤖 Computer is thinking...")
                 time.sleep(0.6)
                 move = self.get_computer_move()
+
+                self.board[move] = "O"
+                self.last_move = move
+
+                clear_screen()
+                self.display_board()
+
+                print(
+                    f"{MAGENTA}🤖 Computer played "
+                    f"position {move + 1}{RESET}"
+                )
+
+                time.sleep(1.2)
+                if self.check_game_over():
+                    break
+
+                self.current_player = "X"
+                continue
 
             else:
                 move = self.get_player_move()
@@ -126,13 +225,36 @@ class TerminalTicTacToe:
                     return
 
             self.board[move] = self.current_player
+            self.last_move = move
 
             if self.check_game_over():
                 break
 
             self.current_player = "O" if self.current_player == "X" else "X"
 
-        print("=" * 30 + "\n")
+        print("=" * 30)
+
+        action = self.post_game_menu()
+
+        if action == "again":
+
+            mode = self.mode
+            difficulty = self.difficulty
+
+            self.reset_game_state()
+
+            self.mode = mode
+            self.difficulty = difficulty
+
+            self.play()
+
+        elif action == "menu":
+
+            self.reset_game_state()
+
+            self.play()
+
+        return
 
     def get_player_move(self):
         while True:
@@ -271,6 +393,10 @@ class TerminalTicTacToe:
                 == self.board[combo[1]]
                 == self.board[combo[2]]
             ):
+
+                self.winning_line = combo
+
+                clear_screen()
                 self.display_board()
 
                 winner = self.board[combo[0]]
@@ -285,6 +411,7 @@ class TerminalTicTacToe:
                 return True
 
         if all(cell in ["X", "O"] for cell in self.board):
+            clear_screen()
             self.display_board()
             print(f"{YELLOW}🤝 Game Over: It's a Draw!{RESET}")
             return True
