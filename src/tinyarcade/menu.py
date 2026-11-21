@@ -1,9 +1,15 @@
+import os
+import time
+
 from tinyarcade import game_num_guess
 from tinyarcade import game_mastermind
 from tinyarcade import game_tictactoe
 from tinyarcade import game_colour_memorizing
 from tinyarcade import game_rock_paper_scissors
 from tinyarcade import game_hangman
+
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 GAMES = {
@@ -25,15 +31,28 @@ def show_menu():
 
 def run():
     while True:
+        clear_screen()
         show_menu()
         choice = input("Choose a game: ").strip().lower()
 
         if choice == "q":
-            print("Thanks for playing TinyArcade!")
+            clear_screen()
+
+            print("=" * 50)
+            print("THANK YOU FOR PLAYING".center(50))
+            print("TINYARCADE".center(50))
+            print("=" * 50)
+            print()
+            print("🎮 Hope you had fun!".center(50))
+            print("🏆 Keep practicing and challenge yourself!".center(50))
+            print("🕹️ Thanks for supporting TinyArcade!".center(50))
+            print()
+            print("=" * 50)
             break
 
         if choice in GAMES:
             _, game_function = GAMES[choice]
+            clear_screen()
             game_function()
         else:
             print("Invalid choice. Please try again.")
