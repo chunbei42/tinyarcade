@@ -1,5 +1,8 @@
 import random
+import os
 
+def clr():
+    os.system("cls" if os.name == "nt" else "clear")
 
 # ANSI colours
 GREEN = "\033[92m"
@@ -52,9 +55,14 @@ def update_range(guess, target_number, min_num, max_num):
 
 
 def show_result(guess, target_number, attempts):
-    print("\n🎮 GUESS RESULT")
+    print("🎮 GUESS RESULT")
     print(f"🎯 Your guess  : {guess}")
-    print(f"🤫 Secret number: ???")
+
+    if guess == target_number:
+        print(f"🤫 Secret number: {target_number}")
+    else:
+        print("🤫 Secret number: ???")
+
     print("-" * 30)
 
     if guess == target_number:
@@ -86,11 +94,13 @@ def ask_play_again():
 
 def play():
     while True:
+        clr()
+
         min_num, max_num = generate_range()
         target_number = random.randint(min_num, max_num)
         attempts = 0
 
-        print("\n🔢 === NUMBER GUESSING GAME === 🔢")
+        print("🔢 === NUMBER GUESSING GAME === 🔢")
         print(
             f"I'm thinking of a number between "
             f"{min_num} and {max_num}."
@@ -106,6 +116,7 @@ def play():
 
             attempts += 1
 
+            clr()
             won = show_result(guess, target_number, attempts)
 
             if won:
