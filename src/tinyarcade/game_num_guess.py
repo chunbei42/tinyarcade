@@ -1,6 +1,4 @@
 import random
-import tkinter as tk
-from tkinter import messagebox
 
 
 def generate_range():
@@ -11,72 +9,57 @@ def generate_range():
             return a, b
 
 
-class NumberGuessingGame:
+class TerminalGuessingGame:
+
     def __init__(self):
         self.min_num, self.max_num = generate_range()
         self.target_number = random.randint(self.min_num, self.max_num)
         self.attempts = 0
 
-        self.window = tk.Tk()
-        self.window.title("Number Guessing Game")
-        self.window.geometry("350x220")
+    def play(self):
+        print("=== Welcome to the Number Guessing Game! ===")
+        print(f"I'm thinking of a number between {self.min_num} and {self.max_num}.\n")
 
-        self.guess_label = tk.Label(
-            self.window,
-            text=f"Guess a number between {self.min_num} and {self.max_num}",
-            font=("Arial", 16),
-        )
-        self.guess_label.pack(pady=10)
-
-        self.guess_entry = tk.Entry(self.window, width=10, font=("Arial", 14))
-        self.guess_entry.pack(pady=5)
-        self.guess_entry.focus()
-
-        self.check_button = tk.Button(
-            self.window, text="Check", command=self.check_guess, font=("Arial", 12)
-        )
-        self.check_button.pack(pady=5)
-
-        self.result_label = tk.Label(
-            self.window, text="", font=("Arial", 14), wraplength=320
-        )
-        self.result_label.pack(pady=10)
-
-        self.window.bind("<Return>", lambda event: self.check_guess())
-
-    def check_guess(self):
-        try:
-            user_guess = int(self.guess_entry.get())
-            if user_guess < self.min_num or user_guess > self.max_num:
-                messagebox.showerror(
-                    "Invalid input",
-                    f"Please enter a number between {self.min_num} and {self.max_num}.",
+        while True:
+            try:
+                # Prompt the user for input
+                user_input = input(
+                    f"Enter your guess ({self.min_num}-{self.max_num}): "
                 )
-                return
 
-            self.attempts += 1
+                # Allow user to quit early
+                if user_input.lower() == "exit":
+                    print(
+                        f"Game over! The correct number was {self.target_number}."
+                    )
+                    break
 
-            if user_guess == self.target_number:
-                result_text = f"Congratulations! You found the number in {self.attempts} attempt(s)."
-                text_color = "green"
-                self.check_button.config(state="disabled")
-            elif user_guess < self.target_number:
-                result_text = "Too low!"
-                text_color = "red"
-            else:
-                result_text = "Too high!"
-                text_color = "red"
+                user_guess = int(user_input)
 
-            self.result_label.config(text=result_text, fg=text_color)
-            self.guess_entry.delete(0, tk.END)
+                # Validate range
+                if user_guess < self.min_num or user_guess > self.max_num:
+                    print(
+                        f"❌ Invalid range! Please stay between {self.min_num} and {self.max_num}.\n"
+                    )
+                    continue
 
-        except ValueError:
-            messagebox.showerror("Invalid input", "Please enter a valid number.")
+                self.attempts += 1
 
-    def run(self):
-        self.window.mainloop()
+                # Check guess
+                if user_guess == self.target_number:
+                    print(
+                        f"\n🎉 Congratulations! You found the number in {self.attempts} attempt(s)!"
+                    )
+                    break
+                elif user_guess < self.target_number:
+                    print("📉 Too low! Try again.\n")
+                else:
+                    print("📈 Too high! Try again.\n")
+
+            except ValueError:
+                print("❌ Invalid input! Please enter a valid whole number.\n")
 
 
 if __name__ == "__main__":
-    game = NumberGuessingGame()
-    game.run()
+    game = TerminalGuessingGame()
+    game.play()
