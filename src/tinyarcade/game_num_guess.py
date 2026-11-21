@@ -1,65 +1,126 @@
 import random
 
 
+# ANSI colours
+GREEN = "\033[92m"
+RED = "\033[91m"
+YELLOW = "\033[93m"
+CYAN = "\033[96m"
+RESET = "\033[0m"
+
+
 def generate_range():
+    return 1, 1000
+
+
+def get_guess(min_num, max_num):
     while True:
-        a = random.randint(1, 10000)
-        b = random.randint(1, 10000)
-        if b - a >= 100:
-            return a, b
+        user_input = input(
+            f"\n🎯 Enter your guess ({min_num}-{max_num}) "
+            f"or [q] to quit: "
+        ).strip().lower()
+
+        if user_input == "q":
+            return "quit"
+
+        try:
+            guess = int(user_input)
+        except ValueError:
+            print("❌ Invalid input! Please enter a whole number.")
+            continue
+
+        if guess < min_num or guess > max_num:
+            print(
+                f"❌ Invalid range! Please stay between "
+                f"{min_num} and {max_num}."
+            )
+            continue
+
+        return guess
 
 
-class TerminalGuessingGame:
+def update_range(guess, target_number, min_num, max_num):
+    if guess < target_number:
+        print(f"{CYAN}📉 Too low! The number is higher than {guess}.{RESET}")
+        return guess + 1, max_num
 
-    def __init__(self):
-        self.min_num, self.max_num = generate_range()
-        self.target_number = random.randint(self.min_num, self.max_num)
-        self.attempts = 0
+    if guess > target_number:
+        print(f"{YELLOW}📈 Too high! The number is lower than {guess}.{RESET}")
+        return min_num, guess - 1
 
-    def play(self):
-        print("=== Welcome to the Number Guessing Game! ===")
-        print(f"I'm thinking of a number between {self.min_num} and {self.max_num}.\n")
+    return min_num, max_num
+
+
+def show_result(guess, target_number, attempts):
+    print("\n🎮 GUESS RESULT")
+    print(f"🎯 Your guess  : {guess}")
+    print(f"🤫 Secret number: ???")
+    print("-" * 30)
+
+    if guess == target_number:
+        print(
+            f"{GREEN}🎉 Congratulations! You found the number "
+            f"in {attempts} attempt(s)!{RESET}"
+        )
+        return True
+
+    return False
+
+
+def ask_play_again():
+    while True:
+        print("\nWhat would you like to do?")
+        print("[1] Play Number Guess again")
+        print("[2] Return to TinyArcade menu")
+
+        choice = input("\nChoose an option: ").strip()
+
+        if choice == "1":
+            return True
+
+        if choice == "2":
+            return False
+
+        print("❌ Invalid choice. Please enter 1 or 2.")
+
+
+def play():
+    while True:
+        min_num, max_num = generate_range()
+        target_number = random.randint(min_num, max_num)
+        attempts = 0
+
+        print("\n🔢 === NUMBER GUESSING GAME === 🔢")
+        print(
+            f"I'm thinking of a number between "
+            f"{min_num} and {max_num}."
+        )
+        print("🏆 Guess the secret number!")
 
         while True:
-            try:
-                # Prompt the user for input
-                user_input = input(
-                    f"Enter your guess ({self.min_num}-{self.max_num}): "
-                )
+            guess = get_guess(min_num, max_num)
 
-                # Allow user to quit early
-                if user_input.lower() == "exit":
-                    print(
-                        f"Game over! The correct number was {self.target_number}."
-                    )
-                    break
+            if guess == "quit":
+                print("\n🚪 Returning to TinyArcade menu...")
+                return
 
-                user_guess = int(user_input)
+            attempts += 1
 
-                # Validate range
-                if user_guess < self.min_num or user_guess > self.max_num:
-                    print(
-                        f"❌ Invalid range! Please stay between {self.min_num} and {self.max_num}.\n"
-                    )
-                    continue
+            won = show_result(guess, target_number, attempts)
 
-                self.attempts += 1
+            if won:
+                break
 
-                # Check guess
-                if user_guess == self.target_number:
-                    print(
-                        f"\n🎉 Congratulations! You found the number in {self.attempts} attempt(s)!"
-                    )
-                    break
-                elif user_guess < self.target_number:
-                    print("📉 Too low! Try again.\n")
-                else:
-                    print("📈 Too high! Try again.\n")
+            min_num, max_num = update_range(
+                guess,
+                target_number,
+                min_num,
+                max_num,
+            )
 
-            except ValueError:
-                print("❌ Invalid input! Please enter a valid whole number.\n")
+        if not ask_play_again():
+            break
 
 
 if __name__ == "__main__":
-    game = TerminalGuessingGame()
-    game.play()
+    play()
