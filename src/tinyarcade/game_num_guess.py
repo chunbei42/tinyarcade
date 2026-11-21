@@ -80,7 +80,7 @@ def ask_play_again():
     while True:
         print("\nWhat would you like to do?")
         print("[1] Play Number Guess again")
-        print("[2] Return to TinyArcade menu")
+        print("[2] Return to Menu")
 
         choice = input("\nChoose an option: ").strip()
 
